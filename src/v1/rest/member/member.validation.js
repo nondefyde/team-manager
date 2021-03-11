@@ -34,9 +34,13 @@ class MemberValidation extends AppValidation {
 	 */
 	update(obj) {
 		const rules = {
+			'email': 'email',
 			'firstName': 'string',
-			'lastLame': 'string',
-			'skills': 'array'
+			'lastName': 'string',
+			'tags': 'array',
+			'profile.role': 'string',
+			'profile.startDate': 'date',
+			'profile.endDate': 'date'
 		};
 		const validator = new Validator(obj, rules);
 		return {

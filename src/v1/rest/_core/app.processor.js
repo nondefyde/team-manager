@@ -18,8 +18,8 @@ export default class AppProcessor {
 	}
 
 	/**
-	 * @param {Object} current required for response
-	 * @param {Object} obj required for response
+	 * @param {Object} current object for response
+	 * @param {Object} obj payload from request for response
 	 * @return {Object}
 	 */
 	async validateUpdate(current, obj) {

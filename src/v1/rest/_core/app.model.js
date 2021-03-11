@@ -10,7 +10,7 @@ import AppProcessor from './app.processor';
 function AppSchema(...args) {
 	Schema.apply(this, args);
 
-	this.statics.softDelete = true;
+	this.statics.softDelete = false;
 	this.statics.uniques = [];
 	this.statics.fillables = [];
 	this.statics.updateFillables = [];

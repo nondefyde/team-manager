@@ -5,6 +5,8 @@ import mongoose, {Schema} from 'mongoose';
 import AppSchema from '../_core/app.model';
 import MemberValidation from './member.validation';
 import MemberProcessor from './member.processor';
+import Contractor from './profiles/contractor.model';
+import Employee from './profiles/employee.model';
 
 const MemberSchema = new AppSchema({
 	email: {
@@ -41,7 +43,9 @@ const MemberSchema = new AppSchema({
 	}
 }, {
 	autoCreate: true,
-	timestamps: true
+	timestamps: true,
+	toJSON: {virtuals: true},
+	toObject: {virtuals: true}
 });
 
 MemberSchema.statics.uniques = ['email'];
@@ -53,6 +57,23 @@ MemberSchema.statics.fillables = [
 	'profileType',
 	'tags'
 ];
+
+MemberSchema.statics.updateFillables = [
+	'email',
+	'firstName',
+	'lastName',
+	'tags'
+];
+
+/**
+ * @param {Object} doc document removed
+ * @param Only document middleware
+ */
+MemberSchema.pre('remove', {document: true, query: false}, function (next) {
+	const ProfileModel = (this.profileType === 'Contractor') ? Contractor : Employee;
+	ProfileModel.remove({_id: this.profile}).exec();
+	next();
+});
 
 /**
  * @return {Object} The validator object with the specified rules.

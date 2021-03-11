@@ -1,5 +1,5 @@
 import AppProcessor from '../_core/app.processor';
-import {extend, pick} from 'lodash';
+import {isEmpty, pick} from 'lodash';
 import Employee from '../member/profiles/employee.model';
 import Contractor from '../member/profiles/contractor.model';
 
@@ -54,13 +54,27 @@ class MemberProcessor extends AppProcessor {
 	 */
 	async updateObject(current, obj) {
 		try {
-			const userUpdate = this.model.fillables;
-			if (userUpdate && userUpdate.length > 0) {
-				obj = pick(obj, ...userUpdate);
+			const ProfileModel = this.getProfile(current.profileType);
+			let profilePayload = {...obj.profile};
+			const profileFillables = ProfileModel.fillables;
+			if (profileFillables && profileFillables.length > 0) {
+				profilePayload = pick(profilePayload, ...profileFillables);
 			}
-			current = extend(current, {
-				...obj
-			});
+			let payload = {...obj};
+			const fillables = this.model.updateFillables;
+			if (fillables && fillables.length > 0) {
+				payload = pick(obj, ...fillables);
+			}
+			if (!isEmpty(profilePayload)) {
+				await ProfileModel.findOneAndUpdate({member: current._id},
+					{
+						...profilePayload,
+						$setOnInsert: {
+							member: current._id
+						}
+					}, {upsert: true, new: true, setDefaultsOnInsert: true});
+			}
+			current = Object.assign(current, payload);
 			return current.save();
 		} catch (e) {
 			throw e;

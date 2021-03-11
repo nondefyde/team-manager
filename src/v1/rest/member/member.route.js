@@ -15,6 +15,7 @@ router.route('/members')
 router.param('id', memberCtrl.id, response);
 router.route('/members/:id')
 	.get(memberCtrl.findOne, response)
-	.put(memberCtrl.update, response);
+	.put(memberCtrl.update, response)
+	.delete(memberCtrl.delete, response);
 
 export default router;
