@@ -11,9 +11,15 @@ class MemberValidation extends AppValidation {
 	 */
 	create(obj) {
 		const rules = {
+			'email': 'required|email',
 			'firstName': 'required|string',
-			'lastLame': 'required|string',
-			'skills': 'required|array'
+			'lastName': 'required|string',
+			'tags': 'array',
+			'profileType': ['required', {'in': ['Employee', 'Contractor']}],
+			'profile': 'required',
+			'profile.role': 'required_if:profileType,Employee|string',
+			'profile.startDate': 'required_if:profileType,Contractor|date',
+			'profile.endDate': 'required_if:profileType,Contractor|date'
 		};
 		const validator = new Validator(obj, rules);
 		return {
@@ -21,6 +27,7 @@ class MemberValidation extends AppValidation {
 			passed: validator.passes()
 		};
 	}
+
 	/**
 	 * @param {Object} obj The object to validate
 	 * @return {Object} Validator

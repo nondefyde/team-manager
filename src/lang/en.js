@@ -7,11 +7,11 @@ export default {
 		no_update_input: 'Nothing to update'
 	},
 	members: {
-		created: 'User successfully created',
-		updated: 'User successfully updated',
-		deleted: 'User successfully deleted',
-		not_found: 'User not found',
-		profile_not_found: 'Profile not found!',
-		cannot_delete_user: 'Not authorized to delete a regular main'
+		created: 'Member successfully created',
+		updated: 'Member successfully updated',
+		deleted: 'Member successfully deleted',
+		not_found: 'Member not found',
+		profile_not_found: 'Member Profile not found!',
+		email_exist: 'Member with email already exist'
 	},
 };

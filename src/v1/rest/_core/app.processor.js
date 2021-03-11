@@ -1,5 +1,8 @@
 import AppResponse from '../../../lib/app-response';
-import _ from 'lodash';
+import {extend, isArray, isEmpty, omit, pick} from 'lodash';
+import AppError from '../../../lib/app-error';
+import lang from '../../../lang';
+import {CONFLICT} from '../../../utils/constants';
 
 /**
  * The main processor class
@@ -43,12 +46,9 @@ export default class AppProcessor {
 	 * @param {Object} options required for response
 	 * @return {Promise<Object>}
 	 */
-	async getApiClientResponse({model, value, code, message, queryParser, pagination, count, token}) {
+	async getApiClientResponse({model, value, code, message, queryParser, pagination, count}) {
 		const meta = AppResponse.getSuccessMeta();
-		if (token) {
-			meta.token = token;
-		}
-		_.extend(meta, {status_code: code});
+		extend(meta, {status_code: code});
 		if (message) {
 			meta.message = message;
 		}
@@ -64,10 +64,10 @@ export default class AppProcessor {
 		}
 		if (model.hiddenFields && model.hiddenFields.length > 0) {
 			const isFunction = typeof value.toJSON === 'function';
-			if (_.isArray(value)) {
-				value = value.map(v => _.omit((isFunction) ? v.toJSON() : v, ...model.hiddenFields));
+			if (isArray(value)) {
+				value = value.map(v => omit((isFunction) ? v.toJSON() : v, ...model.hiddenFields));
 			} else {
-				value = _.omit((isFunction) ? value.toJSON() : value, ...model.hiddenFields);
+				value = omit((isFunction) ? value.toJSON() : value, ...model.hiddenFields);
 			}
 		}
 		return AppResponse.format(meta, value);
@@ -92,12 +92,11 @@ export default class AppProcessor {
 			query = query.skip(pagination.skip)
 				.limit(pagination.perPage);
 		}
-
 		query = query.sort(
 			(pagination && pagination.sort) ?
 				Object.assign(pagination.sort, {createdAt: -1}) : '-createdAt');
 		return {
-			value: await query.select(queryParser.selection).exec(),
+			value: await query.exec(),
 			count: await this.model.countDocuments(queryParser.query).exec()
 		};
 	}
@@ -107,7 +106,7 @@ export default class AppProcessor {
 	 * @return {Object}
 	 */
 	async buildSearchQuery(queryParser = null) {
-		return _.omit(queryParser.query, ['deleted']);
+		return omit(queryParser.query, ['deleted']);
 	}
 
 	/**
@@ -148,19 +147,15 @@ export default class AppProcessor {
 
 	/**
 	 * @param {Object} obj The payload object
-	 * @param {Object} session The payload object
 	 * @return {Object}
 	 */
-	async createNewObject(obj, session = null) {
+	async createNewObject(obj) {
 		let payload = {...obj};
 		const tofill = this.model.fillables;
 		if (tofill && tofill.length > 0) {
-			payload = _.pick(obj, ...tofill);
+			payload = pick(obj, ...tofill);
 		}
-		if (obj.user) {
-			payload.user = obj.user;
-		}
-		return new this.model(obj).save();
+		return new this.model(payload).save();
 	}
 
 	/**
@@ -171,23 +166,10 @@ export default class AppProcessor {
 	async updateObject(current, obj) {
 		const tofill = this.model.updateFillables || this.model.fillables;
 		if (tofill.length > 0) {
-			obj = _.pick(obj, ...tofill);
+			obj = pick(obj, ...tofill);
 		}
-		_.extend(current, obj);
+		extend(current, obj);
 		return current.save();
-	}
-
-	/**
-	 * @param {Object} req The request object
-	 * @return {Promise<Object>}
-	 */
-	async prepareBodyObject(req) {
-		let obj = Object.assign({}, req.body, req.params);
-		if (req.authId) {
-			const user = req.authId;
-			obj = Object.assign(obj, {user}, req.body);
-		}
-		return obj;
 	}
 
 	/**
@@ -195,16 +177,17 @@ export default class AppProcessor {
 	 * @param {Object} obj The request object
 	 * @return {Promise<Object>}
 	 */
-	async retrieveExistingResource(model, obj) {
-		if (model.uniques && !_.isEmpty(model.uniques)) {
+	async validateUnique(model, obj) {
+		if (model.uniques && !isEmpty(model.uniques)) {
 			const uniqueKeys = model.uniques;
 			const query = {};
 			for (const key of uniqueKeys) {
 				query[key] = obj[key];
 			}
-			const found = await model.findOne({...query, deleted: false, active: true});
+			const found = await model.findOne({...query, deleted: false});
 			if (found) {
-				return found;
+				const messageObj = this.model.uniques.map(m => ({[m]: `${m} must be unique`}));
+				return new AppError(lang.get('error').resource_already_exist, CONFLICT, messageObj);
 			}
 		}
 		return null;

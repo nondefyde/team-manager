@@ -2,7 +2,7 @@ import QueryParser from '../../../lib/query-parser';
 import AppError from '../../../lib/app-error';
 import {BAD_REQUEST, CONFLICT, CREATED, NOT_FOUND, OK} from '../../../utils/constants';
 import lang from '../../../lang/index';
-import {extend, isEmpty, pick} from 'lodash';
+import {extend, isEmpty} from 'lodash';
 import Pagination from '../../../lib/pagination';
 
 /**
@@ -82,19 +82,16 @@ class AppController {
 			if (!validate.passed) {
 				return next(new AppError(lang.get('error').inputs, BAD_REQUEST, validate.errors));
 			}
-			const obj = await processor.prepareBodyObject(req);
-			let object = await processor.retrieveExistingResource(this.model, obj);
-			if (object) {
-				const messageObj = this.model.uniques.map(m => ({[m]: `${m} must be unique`}));
-				const appError = new AppError(lang.get('error').resource_already_exist, CONFLICT, messageObj);
-				return next(appError);
-			} else {
-				let checkError = await processor.validateCreate(obj);
-				if (checkError) {
-					return next(checkError);
-				}
-				object = await processor.createNewObject(obj);
+			const obj = await req.body;
+			let uniqueValidationError = await processor.validateUnique(this.model, obj);
+			if (uniqueValidationError) {
+				return next(uniqueValidationError);
 			}
+			let checkError = await processor.validateCreate(obj);
+			if (checkError) {
+				return next(checkError);
+			}
+			const object = await processor.createNewObject(obj);
 			req.response = {
 				message: this.lang.created,
 				model: this.model,
@@ -114,8 +111,8 @@ class AppController {
 	 * @return {Object} The response object
 	 */
 	async find(req, res, next) {
-		const queryParser = new QueryParser(Object.assign({}, req.query));
 		const pagination = new Pagination(req.originalUrl);
+		const queryParser = new QueryParser(Object.assign({}, req.query));
 		const processor = this.model.getProcessor(this.model);
 		try {
 			const {value, count} = await processor.buildModelQueryObject(pagination, queryParser);
@@ -142,20 +139,16 @@ class AppController {
 	async update(req, res, next) {
 		try {
 			const processor = this.model.getProcessor(this.model);
-			const obj = await processor.prepareBodyObject(req);
+			const obj = req.body;
 			const validate = await this.model.getValidator().update(obj);
 			if (!validate.passed) {
 				const error = new AppError(lang.get('error').inputs, BAD_REQUEST, validate.errors);
 				return next(error);
 			}
 			let object = req.object;
-			if (this.model.uniques && this.model.uniques.length > 0 && !isEmpty(pick(obj, this.model.uniques))) {
-				let found = await processor.retrieveExistingResource(this.model, obj);
-				if (found) {
-					const messageObj = this.model.uniques.map(m => ({[m]: `${m} must be unique`}));
-					const appError = new AppError(lang.get('error').resource_already_exist, CONFLICT, messageObj);
-					return next(appError);
-				}
+			let uniqueValidationError = await processor.validateUnique(this.model, obj);
+			if (uniqueValidationError) {
+				return next(uniqueValidationError);
 			}
 			let canUpdateError = await processor.validateUpdate(object, obj);
 			if (!isEmpty(canUpdateError)) {

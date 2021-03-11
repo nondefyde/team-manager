@@ -1,22 +1,33 @@
 import mongoose, {Schema} from 'mongoose';
+import AppSchema from '../../_core/app.model';
 
 /**
  * ContractorSchema
  */
-const ContractorSchema = new Schema({
-	user: {
+const ContractorSchema = new AppSchema({
+	member: {
 		type: Schema.Types.ObjectId,
-		ref: 'User',
+		required: true,
+		ref: 'Member'
+	},
+	startDate: {
+		type: Date,
 		required: true
 	},
-	duration: {
-		startDate: Date,
-		endDate: Date
+	endDate: {
+		type: Date,
+		required: true
 	}
 }, {
 	autoCreate: true,
 	timestamps: true
 });
+
+ContractorSchema.statics.fillables = [
+	'startDate',
+	'endDate'
+];
+
 /**
  * @typedef ContractorSchema
  */

@@ -16,22 +16,24 @@ const MemberSchema = new AppSchema({
 		type: String,
 		trim: true
 	},
-	lastLame: {
+	lastName: {
 		type: String,
 		trim: true
 	},
 	profileType: {
 		type: String,
 		required: true,
-		enum: ['Employee', 'Contractor'],
-		default: 'Employee'
+		enum: ['Employee', 'Contractor']
 	},
 	profile: {
 		type: Schema.Types.ObjectId,
 		required: true,
 		refPath: 'profileType'
 	},
-	skills: [String],
+	tags: [{
+		type: String,
+		index: true
+	}],
 	deleted: {
 		type: Boolean,
 		default: false,
@@ -39,26 +41,18 @@ const MemberSchema = new AppSchema({
 	}
 }, {
 	autoCreate: true,
-	timestamps: true,
-	toJSON: {virtuals: true},
-	toObject: {
-		virtuals: true
-	}
+	timestamps: true
 });
+
+MemberSchema.statics.uniques = ['email'];
 
 MemberSchema.statics.fillables = [
+	'email',
 	'firstName',
-	'lastName'
+	'lastName',
+	'profileType',
+	'tags'
 ];
-
-
-MemberSchema.virtual('auth', {
-	ref: 'Auth',
-	localField: '_id',
-	justOne: true,
-	foreignField: '_id',
-	options: {match: {deleted: false}}
-});
 
 /**
  * @return {Object} The validator object with the specified rules.

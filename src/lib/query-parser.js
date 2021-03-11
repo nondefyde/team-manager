@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {extend, omit, isString, isObject} from 'lodash';
 
 /**
  * The QueryParser class
@@ -12,15 +12,14 @@ class QueryParser {
 		this._query = {...query};
 		this.initialize(query);
 		const excluded = [
-			'per_page', 'page', 'limit', 'sort', 'all', 'includes',
-			'selection', 'population', 'search', 'regex', 'nested'
+			'perPage', 'page', 'limit', 'sort', 'all',
+			'population', 'search'
 		];
 		// omit special query string keys from query before passing down to the model for filtering
-		this._query = _.omit(this._query, ...excluded);
+		this._query = omit(this._query, ...excluded);
 		// Only get collection that has not been virtually deleted.
-		_.extend(this._query, {deleted: false});
+		extend(this._query, {deleted: false});
 		Object.assign(this, this._query);
-		// TODO: Show emma
 	}
 
 	/**
@@ -43,24 +42,6 @@ class QueryParser {
 	get search() {
 		return this._search;
 	}
-
-	/**
-	 * @return {Object} get the selection property
-	 */
-	get selection() {
-		if (this._selection) {
-			return this._selection;
-		}
-		return [];
-	}
-
-	/**
-	 * @param {Object} value is the population object
-	 */
-	set selection(value) {
-		this._selection = value;
-	}
-
 	/**
 	 * @return {Object} get the population object for query
 	 */
@@ -76,7 +57,7 @@ class QueryParser {
 	 */
 	set population(value) {
 		this._population = value;
-		if (!_.isObject(value)) {
+		if (!isObject(value)) {
 			try {
 				this._population = JSON.parse(value.toString());
 			} catch (e) {
@@ -95,7 +76,7 @@ class QueryParser {
 	 */
 	get sort() {
 		if (this._sort) {
-			if (!_.isObject(this._sort)) {
+			if (!isObject(this._sort)) {
 				try {
 					this._sort = JSON.parse(this._sort);
 				} catch (e) {
@@ -103,7 +84,7 @@ class QueryParser {
 				}
 			}
 			for (const [column, direction] of Object.entries(this._sort)) {
-				if (_.isString(direction))
+				if (isString(direction))
 					this._sort[column] = (direction.toLowerCase() === 'asc') ? 1 : -1;
 			}
 			return this._sort;
@@ -127,9 +108,6 @@ class QueryParser {
 		this._sort = query.sort;
 		if (query.population) {
 			this.population = query.population;
-		}
-		if (query.selection) {
-			this.selection = query.selection;
 		}
 		if (query.search) {
 			this._search = query.search;

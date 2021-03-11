@@ -4,9 +4,10 @@ import mongoose, {Schema} from 'mongoose';
  * EmployeeSchema
  */
 const EmployeeSchema = new Schema({
-	user: {
+	member: {
 		type: Schema.Types.ObjectId,
-		ref: 'User'
+		required: true,
+		ref: 'Member'
 	},
 	role: {
 		required: true,
@@ -16,6 +17,10 @@ const EmployeeSchema = new Schema({
 	autoCreate: true,
 	timestamps: true
 });
+
+EmployeeSchema.statics.fillables = [
+	'role'
+];
 
 /**
  * @typedef EmployeeSchema

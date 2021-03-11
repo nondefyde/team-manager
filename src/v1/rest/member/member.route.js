@@ -8,12 +8,12 @@ const router = Router();
 const memberCtrl = new MemberController(Member);
 
 
-router.route('/users')
+router.route('/members')
 	.get(memberCtrl.find, response)
 	.post(memberCtrl.create, response);
 
 router.param('id', memberCtrl.id, response);
-router.route('/users/:id')
+router.route('/members/:id')
 	.get(memberCtrl.findOne, response)
 	.put(memberCtrl.update, response);
 

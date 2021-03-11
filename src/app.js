@@ -32,7 +32,7 @@ export default initDatabase()
 		const server = await http.createServer(app)
 			.listen(config.get('app.port'));
 		log.debug(`\n
-	\tApplication listening on ${config.get('app.baseUrl')}\n
+	\tApplication listening on ${config.get('app.apiHost')}\n
 	\tEnvironment => ${config.util.getEnv('NODE_ENV')} ${server}\n
 	\tDate: ${new Date()}`);
 		return Promise.resolve(app);
