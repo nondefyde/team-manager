@@ -5,8 +5,7 @@
   ],
   "parser": "babel-eslint",
   "plugins": [
-	"import",
-	"mocha"
+	"import"
   ],
   "parserOptions": {
 	"ecmaVersion": 2017,
@@ -14,8 +13,8 @@
   },
   "env": {
 	"node": true,
-	"mocha": true,
-	"es6": true
+	"es6": true,
+	"jest": true
   },
   "rules": {
 	"no-empty": "off",
@@ -23,7 +22,6 @@
 	"no-trailing-spaces": "off",
 	"brace-style": "off",
 	"max-len": "off",
-	"mocha/no-exclusive-tests": "error",
 	"no-console": 0,
 	"no-unused-vars": "off",
 	"no-tabs": "off",

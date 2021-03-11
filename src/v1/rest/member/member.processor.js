@@ -6,7 +6,7 @@ import Employee from '../member/profiles/employee.model';
 import Contractor from '../member/profiles/contractor.model';
 
 /**
- * The ModuleProcessor class
+ * The MemberProcessor class
  */
 class MemberProcessor extends AppProcessor {
 	/**
