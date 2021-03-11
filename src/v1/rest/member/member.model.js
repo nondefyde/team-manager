@@ -89,6 +89,22 @@ MemberSchema.statics.getValidator = () => {
 MemberSchema.statics.getProcessor = (model) => {
 	return new MemberProcessor(model);
 };
+
+/**
+ * @param {String} q query string for filtering
+ * @return {Object} The processor class instance object
+ */
+MemberSchema.statics.searchQuery = (q) => {
+	const regex = new RegExp(q);
+	return [
+		{'email': {$regex: regex, $options: 'i'}},
+		{'firstName': {$regex: regex, $options: 'i'}},
+		{'lastName': {$regex: regex, $options: 'i'}},
+		{'tags': {$regex: regex, $options: 'i'}},
+		{'employeeObject.role': {$regex: regex, $options: 'i'}}
+	];
+};
+
 /**
  * @typedef MemberSchema
  */

@@ -102,14 +102,6 @@ export default class AppProcessor {
 	}
 
 	/**
-	 * @param {Object} queryParser The query parser
-	 * @return {Object}
-	 */
-	async buildSearchQuery(queryParser = null) {
-		return omit(queryParser.query, ['deleted']);
-	}
-
-	/**
 	 * @param {Object} query The query object
 	 * @return {Promise<Object>}
 	 */
