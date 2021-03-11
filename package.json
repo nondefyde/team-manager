@@ -17,13 +17,11 @@
   },
   "scripts": {
 	"prestart": "npm run -s build",
-	"start": "npm run prod",
-	"server": "node ./dist/app.js",
-	"dev": "nodemon --exec NODE_ENV=development npm-run-all lint build server",
-	"prod": "NODE_ENV=production npm-run-all lint build server",
+	"start": "node ./dist/app.js",
+	"dev": "nodemon --exec \"npm run lint && babel-node src/app.js\"",
+	"prod": "NODE_ENV=production npm-run-all lint build start",
 	"build": "npm-run-all clean transpile",
 	"transpile": "babel src --out-dir dist",
-	"watch:dev": "nodemon",
 	"clean": "rimraf dist-server",
 	"lint": "eslint -c .eslintrc src",
 	"test": "jest"

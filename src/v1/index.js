@@ -1,6 +1,6 @@
 import {Router} from 'express';
 
-import user from './rest/user/user.route';
+import user from './rest/member/member.route';
 
 const router = Router();
 

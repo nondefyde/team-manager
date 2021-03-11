@@ -2,7 +2,7 @@ import User from '../user/user.model';
 import AppError from '../../../lib/app-error';
 import {CONFLICT, NOT_FOUND} from '../../../utils/constants';
 
-const UserMiddleWare = {
+const MemberMiddleware = {
 	/**
 	 * @param {Object} req The request object
 	 * @param {Object} res The response object
@@ -21,4 +21,4 @@ const UserMiddleWare = {
 	}
 };
 
-export default UserMiddleWare;
+export default MemberMiddleware;

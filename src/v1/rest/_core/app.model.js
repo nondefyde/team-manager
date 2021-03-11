@@ -12,7 +12,6 @@ function AppSchema(...args) {
 
 	this.statics.softDelete = true;
 	this.statics.uniques = [];
-	this.statics.returnDuplicate = false;
 	this.statics.fillables = [];
 	this.statics.updateFillables = [];
 	this.statics.hiddenFields = [];

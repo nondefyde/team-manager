@@ -2,7 +2,7 @@ import QueryParser from '../../../lib/query-parser';
 import AppError from '../../../lib/app-error';
 import {BAD_REQUEST, CONFLICT, CREATED, NOT_FOUND, OK} from '../../../utils/constants';
 import lang from '../../../lang/index';
-import _ from 'lodash';
+import {extend, isEmpty, pick} from 'lodash';
 import Pagination from '../../../lib/pagination';
 
 /**
@@ -142,14 +142,14 @@ class AppController {
 	async update(req, res, next) {
 		try {
 			const processor = this.model.getProcessor(this.model);
-			let object = req.object;
 			const obj = await processor.prepareBodyObject(req);
 			const validate = await this.model.getValidator().update(obj);
 			if (!validate.passed) {
 				const error = new AppError(lang.get('error').inputs, BAD_REQUEST, validate.errors);
 				return next(error);
 			}
-			if (this.model.uniques && this.model.uniques.length > 0 && !_.isEmpty(_.pick(obj, this.model.uniques))) {
+			let object = req.object;
+			if (this.model.uniques && this.model.uniques.length > 0 && !isEmpty(pick(obj, this.model.uniques))) {
 				let found = await processor.retrieveExistingResource(this.model, obj);
 				if (found) {
 					const messageObj = this.model.uniques.map(m => ({[m]: `${m} must be unique`}));
@@ -158,7 +158,7 @@ class AppController {
 				}
 			}
 			let canUpdateError = await processor.validateUpdate(object, obj);
-			if (!_.isEmpty(canUpdateError)) {
+			if (!isEmpty(canUpdateError)) {
 				return next(canUpdateError);
 			}
 			object = await processor.updateObject(object, obj);
@@ -185,11 +185,11 @@ class AppController {
 		try {
 			const processor = this.model.getProcessor(this.model);
 			let canDeleteError = await processor.validateDelete(object);
-			if (!_.isEmpty(canDeleteError)) {
+			if (!isEmpty(canDeleteError)) {
 				return next(canDeleteError);
 			}
 			if (this.model.softDelete) {
-				_.extend(object, {deleted: true});
+				extend(object, {deleted: true});
 				object = await object.save();
 			} else {
 				object = await object.remove();
