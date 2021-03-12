@@ -15,7 +15,6 @@ Api web service for The Team Manager
 - Install all required dependencies with `yarn install`
 - create .evn file or duplicate env.local file and replace with the configuration environment below
 ```
-PORT=8000
 APP_NAME=TeamManager
 API_KEY=TeamManagerKey
 
