@@ -7,8 +7,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import intiDatabase from './database';
-import seedData from '../src/setup/seed';
-import mongoose from 'mongoose';
+import {EmptyAuthCollections} from './util';
 
 const app = express();
 
@@ -17,14 +16,11 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(cors());
 
-app.set('port', 7000);
-
 export default intiDatabase()
 	.then(async () => {
-		const result = await mongoose.connection.db.dropDatabase();
+		const result = await EmptyAuthCollections();
 		return Promise.resolve(result);
 	})
-	.then(() => seedData(20))
 	.then(() => loadRoutes(app))
 	.then(async (app) => {
 		const server = await http.createServer(app)
