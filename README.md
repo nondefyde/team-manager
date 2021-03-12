@@ -36,13 +36,13 @@ DB_TEST_URL=mongodb+srv://vway:vway_1@cluster0-xyjj9.mongodb.net/team-test
 - Postman collection link : https://www.getpostman.com/collections/34205c70983c75d83321
 - Postman environment variables BASE_URL `http://localhost:8000/v1` and API_KEY `TeamManagerKey`
 
-###Endpoints
+### Endpoints
 **NOTE**
 population querystring is a reserved api keyword that helps 
 return an object instead of the identifier by performing an implicit lookup or join.
 The exhaustive population schema structure can be found here [here](https://mongoosejs.com/docs/populate.html)`
 
-####Create Contractor
+### Create Contractor
 ```
 curl --location --request POST '{{BASE_URL}}/members?population=[%22profile%22]' \
 --header 'x-api-key: {{API_KEY}}' \
@@ -61,7 +61,7 @@ curl --location --request POST '{{BASE_URL}}/members?population=[%22profile%22]'
 ```
 
 
-####Create Employer 
+### Create Employer 
 ```
 curl --location --request POST '{{BASE_URL}}/members?population=[%22profile%22]' \
 --header 'x-api-key: {{API_KEY}}' \
@@ -78,7 +78,7 @@ curl --location --request POST '{{BASE_URL}}/members?population=[%22profile%22]'
 
 ```
 
-####Find Members
+### Find Members
 
 ```
 curl --location --request GET '{{BASE_URL}}/members?population=[%22profile%22]' \
@@ -86,7 +86,7 @@ curl --location --request GET '{{BASE_URL}}/members?population=[%22profile%22]' 
 ```
 
 
-####Get a Member
+#### Get a Member
 
 ```
 curl --location --request GET '{{BASE_URL}}/members/{_id}?population=[%22profile%22]' \
@@ -95,7 +95,7 @@ curl --location --request GET '{{BASE_URL}}/members/{_id}?population=[%22profile
 ```
 
 
-####Update a Members 
+#### Update a Members 
 Note: `To update Contractor or Employee profile`
 the profile attribute within the payload will be responsible for that`
 
@@ -105,14 +105,14 @@ curl --location --request GET '{{BASE_URL}}/members/{_id}?population=[%22profile
 
 ```
 
-####Delete a Members
+### Delete a Members
 
 ```
 curl --location --request DELETE '{{BASE_URL}}/members/{_id}' \
 --header 'x-api-key: {{API_KEY}}' \
 ```
 
-####Seed data
+### Seed data
 querystring
 - size: an integer to indicate the number of data to seed
 - purge: a boolean field determines if the database will be purged before seeding
