@@ -7,13 +7,27 @@ Api web service for The Team Manager
 
 ### Requirements
 
-- Ensure you have Node.JS and Mongo DB installed on your system
+- Ensure you have Node.JS installed on your system
 
 ### Getting Started
 - Clone the repository `git clone  git@gitlab.com:codelittinc/node-rest-interview-project-emmanuel-okafor.git`
-- Change into the directory `cd team-manager`
+- Change into the directory `cd node-rest-interview-project-emmanuel-okafor`
 - Install all required dependencies with `yarn install`
-- Start the application with `npm run dev`
+- create .evn file or duplicate env.local file and replace with the configuration environment below
+```
+PORT=8000
+APP_NAME=TeamManager
+API_KEY=TeamManagerKey
+
+SERVICE_URL=http://127.0.0.1:8000/v1
+
+DB_URL=mongodb+srv://vway:vway_1@cluster0-xyjj9.mongodb.net/team
+DB_TEST_URL=mongodb+srv://vway:vway_1@cluster0-xyjj9.mongodb.net/team-test
+
+```
+
+- Start the application locally `npm run dev`
+- Start the application with docker `docker-compose up`. But make sure you have docker installed locally
 
 ### Testing
 - Run Test with `npm test` command

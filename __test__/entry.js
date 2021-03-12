@@ -24,7 +24,7 @@ export default intiDatabase()
 	.then(() => loadRoutes(app))
 	.then(async (app) => {
 		const server = await http.createServer(app)
-			.listen(9000);
+			.listen(config.get('app.port'));
 		console.log(`\n
 	\tTest Application listening on ${config.get('app.apiHost')}\n
 	\tEnvironment => ${config.util.getEnv('NODE_ENV')} ${server}\n

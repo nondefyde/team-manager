@@ -4,15 +4,11 @@ module.exports = {
 	app: {
 		appName: process.env.APP_NAME || 'Team Manager',
 		environment: process.env.NODE_ENV || 'development',
-		superSecret: process.env.SERVER_SECRET || 'SecretKey',
 		apiHost: `http://localhost:${PORT}`,
 		port: PORT
 	},
-	data: {
-		memberTypes: ['Employee', 'Contractor']
-	},
 	api: {
-		url: process.env.SERVICE_URL || 'http://127.0.0.1:3000/api/v1',
+		url: process.env.SERVICE_URL || 'http://127.0.0.1:8000/api/v1',
 		lang: 'en',
 		prefix: '^/v[1-9]',
 		versions: [1],
