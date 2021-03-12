@@ -1,12 +1,11 @@
-import Member from '../src/v1/rest/member/member.model';
-import Employee from '../src/v1/rest/member/profiles/employee.model';
-import Contractor from '../src/v1/rest/member/profiles/contractor.model';
+import mongoose from 'mongoose';
 
 /**
  * Empty collections
  */
 export const EmptyAuthCollections = async () => {
-	await Member.remove({});
-	await Employee.remove({});
-	await Contractor.remove({});
+	const collections = await mongoose.connection.db.collections();
+	for (let collection of collections) {
+		await collection.remove();
+	}
 };

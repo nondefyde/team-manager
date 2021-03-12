@@ -194,7 +194,7 @@ class MemberProcessor extends AppProcessor {
 				);
 			}
 			queryParser.query = omit(queryParser.query, ...omitKeys);
-			console.log('queryParser.query ::::: ', queryParser.query);
+			console.log('query ::::: ', query);
 			query.push({
 				$match: {
 					...queryParser.query

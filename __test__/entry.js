@@ -7,6 +7,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import intiDatabase from './database';
+import seedData from '../src/setup/seed';
 import mongoose from 'mongoose';
 
 const app = express();
@@ -23,6 +24,7 @@ export default intiDatabase()
 		const result = await mongoose.connection.db.dropDatabase();
 		return Promise.resolve(result);
 	})
+	.then(() => seedData(20))
 	.then(() => loadRoutes(app))
 	.then(async (app) => {
 		const server = await http.createServer(app)

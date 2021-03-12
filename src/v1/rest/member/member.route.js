@@ -7,6 +7,7 @@ const router = Router();
 
 const memberCtrl = new MemberController(Member);
 
+router.get('/members/seed', memberCtrl.seed);
 
 router.route('/members')
 	.get(memberCtrl.find, response)

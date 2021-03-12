@@ -2,32 +2,27 @@ import faker from 'faker';
 import Member from '../v1/rest/member/member.model';
 import Employee from '../v1/rest/member/profiles/employee.model';
 import Contractor from '../v1/rest/member/profiles/contractor.model';
+import {getRandomArbitrary, getRandomSubarray} from '../utils/helpers';
 
-export default async () => {
-	const getRandomSubarray = (array, size) => {
-		let index;
-		let temp;
-		let shuffled = array.slice(0);
-		let i = array.length;
-		let min = i - size;
-		while (i-- > min) {
-			index = Math.floor((i + 1) * Math.random());
-			temp = shuffled[index];
-			shuffled[index] = shuffled[i];
-			shuffled[i] = temp;
-		}
-		return shuffled.slice(min);
-	};
-
-	function getRandomArbitrary(min, max) {
-		return Math.random() * (max - min) + min;
-	}
-
+/**
+ * Seed data
+ * @param {Number} size of data to seed
+ * @return {Number} seeded data
+ */
+export default async (size = 10) => {
 	const tags = [
 		'java',
 		'php',
 		'react',
-		'angular'
+		'angular',
+		'c#',
+		'Vb',
+		'vue',
+		'laravel',
+		'cakePHP',
+		'nestjs',
+		'nodejs',
+		'golang'
 	];
 
 	const type = [
@@ -37,18 +32,22 @@ export default async () => {
 
 	const roles = [
 		'Software Engineer',
-		'Data Scientist'
+		'Data Scientist',
+		'Network Admin',
+		'DevOps Engineer',
+		'Project Manager'
 	];
-	for (let i = 0; i < 10; i++) {
+	const members = [];
+	for (let i = 0; i < size; i++) {
 		let firstName = faker.name.firstName();
 		let lastName = faker.name.lastName();
 		let email = faker.internet.email();
-		let tagSet = getRandomSubarray(tags);
+		let tagSet = getRandomSubarray(tags, getRandomArbitrary(0, tags.length));
 
-		const profileType = getRandomArbitrary(0, 10) % 2 === 0 ? 'Contractor' : 'Employee';
+		const randomInt = getRandomArbitrary(0, 1);
+		const profileType = type[randomInt];
 
 		const ProfileModel = profileType === 'Contractor' ? Contractor : Employee;
-
 		let member = new Member({
 			firstName, lastName, email, tags: tagSet, profileType
 		});
@@ -56,7 +55,7 @@ export default async () => {
 		let profilePayload = {
 			role: getRandomArbitrary(0, roles.length)
 		};
-		if (i % 2 === 0) {
+		if (profileType === 'Contractor') {
 			profilePayload = {
 				startDate: '',
 				endDate: ''
@@ -64,12 +63,14 @@ export default async () => {
 		}
 		const profile = await ProfileModel.findOneAndUpdate({member: member._id},
 			{
-				...profile,
+				...profilePayload,
 				$setOnInsert: {
 					member: member._id
 				}
-			}, {upsert: true, new: true, setDefaultsOnInsert: true, session});
+			}, {upsert: true, new: true, setDefaultsOnInsert: true});
 		member.profile = profile._id;
-		await member.save();
+		member = await member.save();
+		members.push(member);
 	}
+	return members.length;
 };
