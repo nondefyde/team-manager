@@ -116,7 +116,7 @@ curl --location --request DELETE '{{BASE_URL}}/members/{_id}' \
 querystring
 - size: an integer to indicate the number of data to seed
 - purge: a boolean field determines if the database will be purged before seeding
-```
+```K
 curl --location --request GET '{{BASE_URL}}/members/seed?size=4&purge=true' \
 --header 'x-api-key: {{API_KEY}}' \
 --header 'Content-Type: application/json' \
