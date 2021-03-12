@@ -3,7 +3,7 @@ import {ApolloServer} from 'apollo-server-express';
 import createGraphQLLogger from 'graphql-log';
 import {resolvers, types} from './index';
 import {GraphError} from './errors';
-import uuid from 'uuid/v4';
+import randomstring from 'randomstring';
 
 const mergedResolvers = merge(...resolvers);
 
@@ -17,7 +17,6 @@ if (process.env.NODE_ENV === 'development') {
  */
 export const formatError = error => {
 	console.log('error >>>>> ', error);
-	console.log('web services error>>>');
 	let serviceError = {code: error.statusCode};
 	if (error.meta && error.meta.error) {
 		const {message, messages = null} = error.meta.error;
@@ -28,7 +27,7 @@ export const formatError = error => {
 	}
 	// throw new ApolloError('ServerError', error.statusText, serviceError);
 	throw GraphError('ServerError', error.message || 'Error processing request', {
-		errorId: uuid(),
+		errorId: randomstring.generate(),
 		...serviceError
 	});
 };

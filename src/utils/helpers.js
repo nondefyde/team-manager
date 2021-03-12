@@ -30,3 +30,13 @@ export const getRandomArbitrary = (min, max) => {
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+/**
+ * Get Random number from a range of number
+ * @param {Date} start
+ * @param {Date} end
+ * @return {Date} size of subarray
+ */
+export const randomDate = (start, end) => {
+	return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+};

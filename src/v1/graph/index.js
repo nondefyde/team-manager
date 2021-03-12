@@ -1,16 +1,16 @@
 // TYPES
 import rootTypes from './_core/types';
-import userTypes from './user/types';
+import memberTypes from './member/types';
 // RESOLVERS
 import rootResolvers from './_core/rootResolvers';
-import userResolver from './user/resolvers';
+import memberResolver from './member/resolvers';
 
 export const types = [
 	rootTypes,
-	userTypes
+	memberTypes
 ];
 
 export const resolvers = [
 	rootResolvers,
-	userResolver
+	memberResolver
 ];

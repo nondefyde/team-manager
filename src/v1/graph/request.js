@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const https = require('https');
 
-const baseUrl = process.env.BILLING_SERVICE;
+const baseUrl = process.env.SERVICE_URL;
 const defaultOptions = {
 	httpsAgent: new https.Agent({
 		rejectUnauthorized: false

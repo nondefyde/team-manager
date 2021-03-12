@@ -11,16 +11,15 @@ export default `
 	}
 
 	type Pagination {
-		total_count: Int
-		per_page: Int
+		totalCount: Int
+		perPage: Int
 		previous: Int
 		current: Int
-		hasMore: Boolean
 	}
 
 	input PaginationInput {
 		page: Int
-		per_page: Int
+		perPage: Int
 	}
 
 	scalar Date

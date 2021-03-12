@@ -2,7 +2,7 @@ import faker from 'faker';
 import Member from '../v1/rest/member/member.model';
 import Employee from '../v1/rest/member/profiles/employee.model';
 import Contractor from '../v1/rest/member/profiles/contractor.model';
-import {getRandomArbitrary, getRandomSubarray} from '../utils/helpers';
+import {getRandomArbitrary, getRandomSubarray, randomDate} from '../utils/helpers';
 
 /**
  * Seed data
@@ -53,12 +53,12 @@ export default async (size = 10) => {
 		});
 
 		let profilePayload = {
-			role: getRandomArbitrary(0, roles.length)
+			role: roles[getRandomArbitrary(0, roles.length)]
 		};
 		if (profileType === 'Contractor') {
 			profilePayload = {
-				startDate: '',
-				endDate: ''
+				startDate: randomDate(new Date(2020, 0, 1), new Date(2021, 11, 1)),
+				endDate: randomDate(new Date(2021, 0, 1), new Date(2021, 11, 1))
 			};
 		}
 		const profile = await ProfileModel.findOneAndUpdate({member: member._id},
