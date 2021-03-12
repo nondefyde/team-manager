@@ -2,8 +2,8 @@ import merge from 'lodash/merge';
 import {ApolloServer} from 'apollo-server-express';
 import createGraphQLLogger from 'graphql-log';
 import {resolvers, types} from './index';
-import {GraphError} from './errors';
 import randomstring from 'randomstring';
+import {createError} from 'apollo-errors';
 
 const mergedResolvers = merge(...resolvers);
 
@@ -30,6 +30,18 @@ export const formatError = error => {
 		errorId: randomstring.generate(),
 		...serviceError
 	});
+};
+
+/**
+ * This function is run on each error passed back to the client
+ * @param {String} name
+ * @param {String} message
+ * @param {Object} data
+ * @return {Object} res The response object
+ */
+export const GraphError = (name, message, data = {}) => {
+	const CustomError = createError(name, {message, data});
+	return new CustomError;
 };
 
 
